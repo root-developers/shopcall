@@ -162,13 +162,13 @@
             const ph = document.getElementById('sc-callback-phone').value;
             if (!ph) { const m = document.getElementById('sc-callback-msg'); m.textContent = 'Please enter your phone number'; m.style.color = '#ef4444'; m.style.display = 'block'; return; }
             const m = document.getElementById('sc-callback-msg');
-            m.textContent = '✓ We\\'ll connect with you soon!';
+            m.textContent = '✓ We will connect with you soon!';
             m.style.color = '#22c55e';
             m.style.display = 'block';
             document.getElementById('sc-callback-btn').disabled = true;
             document.getElementById('sc-callback-btn').textContent = 'Submitted';
             // Send phone to API for store owner to see
-            fetch(\`\${API_BASE}/video/join-meeting\`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sdkKey: storeKey, shopperName: name, shopperPhone: ph, callbackOnly: true }) }).catch(() => {});
+            fetch(`${API_BASE}/video/join-meeting`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sdkKey: storeKey, shopperName: name, shopperPhone: ph, callbackOnly: true }) }).catch(() => {});
           };
         } else {
           errEl.textContent = data.message || data.error;
