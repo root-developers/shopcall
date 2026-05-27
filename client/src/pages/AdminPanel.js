@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { API } from '../App';
 
+const ADM_NAV = [
+  { id: 'overview', label: 'Overview', icon: '◎' },
+  { id: 'stores', label: 'Stores', icon: '◈' },
+  { id: 'billing', label: 'Billing', icon: '◇' },
+  { id: 'site', label: 'Site Content', icon: '✎' },
+];
+
 export default function AdminPanel({ token, onLogout }) {
   const [page, setPage] = useState('overview');
+  const [sidebar, setSidebar] = useState(false);
   const [stats, setStats] = useState(null);
   const [stores, setStores] = useState([]);
   const h = { Authorization: `Bearer ${token}` };
@@ -19,21 +27,31 @@ export default function AdminPanel({ token, onLogout }) {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#09090b', color: '#f4f4f5', fontFamily: "'Inter',sans-serif", display: 'flex' }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');*{box-sizing:border-box;margin:0;padding:0}.adm-nav{transition:all .15s}.adm-nav:hover{background:#18181b !important}`}</style>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#09090b', color: '#f4f4f5', fontFamily: "'Inter',-apple-system,sans-serif" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        *{box-sizing:border-box;margin:0;padding:0}
+        @keyframes admFadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+        .adm-fade{animation:admFadeUp .4s cubic-bezier(.16,1,.3,1)}
+        .adm-nav{transition:all .15s}.adm-nav:hover{background:#18181b !important}
+        @media(min-width:769px){.adm-sidebar{position:relative !important;left:0 !important}.adm-hamburger{display:none !important}}
+        @media(max-width:768px){.adm-sidebar{position:fixed !important}.adm-content{padding:16px !important}}
+      `}</style>
+
+      {sidebar && <div onClick={() => setSidebar(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.6)', backdropFilter: 'blur(4px)', zIndex: 40 }} />}
 
       {/* Sidebar */}
-      <aside style={{ width: 220, background: '#0c0c0e', borderRight: '1px solid #1f1f23', padding: '20px 8px', display: 'flex', flexDirection: 'column' }}>
+      <aside className="adm-sidebar" style={{ width: 220, background: '#0c0c0e', borderRight: '1px solid #1f1f23', padding: '20px 8px', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, bottom: 0, left: sidebar ? 0 : -220, zIndex: 50, transition: 'left .25s cubic-bezier(.4,0,.2,1)' }}>
         <div style={{ padding: '0 12px', marginBottom: 24 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <div style={{ width: 26, height: 26, borderRadius: 6, background: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 800, color: '#fff' }}>⚡</div>
             <span style={{ fontSize: 14, fontWeight: 700 }}>Admin Panel</span>
           </div>
         </div>
-        {[{ id: 'overview', label: 'Overview', icon: '◎' }, { id: 'stores', label: 'Stores', icon: '◈' }, { id: 'billing', label: 'Billing', icon: '◇' }, { id: 'site', label: 'Site Content', icon: '✎' }].map(n => (
-          <button key={n.id} onClick={() => setPage(n.id)} className="adm-nav"
+        {ADM_NAV.map(n => (
+          <button key={n.id} onClick={() => { setPage(n.id); setSidebar(false); }} className="adm-nav"
             style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '9px 12px', border: 'none', borderRadius: 7, background: page === n.id ? '#1f1f23' : 'transparent', color: page === n.id ? '#f4f4f5' : '#71717a', fontSize: 13, fontWeight: 500, cursor: 'pointer', textAlign: 'left', marginBottom: 2 }}>
-            <span>{n.icon}</span>{n.label}
+            <span style={{ fontSize: 14, opacity: page === n.id ? 1 : .6 }}>{n.icon}</span><span>{n.label}</span>
           </button>
         ))}
         <div style={{ marginTop: 'auto' }}>
@@ -42,7 +60,13 @@ export default function AdminPanel({ token, onLogout }) {
       </aside>
 
       {/* Main */}
-      <main style={{ flex: 1, padding: 24, overflowY: 'auto' }}>
+      <main style={{ flex: 1, minWidth: 0 }}>
+        <header style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 20px', borderBottom: '1px solid #1f1f23', position: 'sticky', top: 0, background: '#09090b', zIndex: 30 }}>
+          <button className="adm-hamburger" onClick={() => setSidebar(true)} style={{ background: '#111113', border: '1px solid #1f1f23', borderRadius: 6, color: '#f4f4f5', fontSize: 16, cursor: 'pointer', padding: '5px 9px', lineHeight: 1 }}>☰</button>
+          <h2 style={{ fontSize: 14, fontWeight: 600, letterSpacing: -.2 }}>{ADM_NAV.find(n => n.id === page)?.label}</h2>
+        </header>
+
+        <div className="adm-content adm-fade" style={{ padding: 24 }}>
         {/* OVERVIEW */}
         {page === 'overview' && stats && (
           <div>
@@ -92,6 +116,7 @@ export default function AdminPanel({ token, onLogout }) {
         {page === 'site' && (
           <SiteEditor token={token} />
         )}
+        </div>
       </main>
     </div>
   );
