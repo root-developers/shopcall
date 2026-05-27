@@ -36,6 +36,9 @@ app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/signup', authLimiter);
 app.use('/api/admin/login', authLimiter);
 
+// Health check (for UptimeRobot - no DB hit, no auth, no rate limit)
+app.get('/health', (req, res) => res.status(200).send('ok'));
+
 // Static SDK
 app.use('/sdk', express.static(path.join(__dirname, 'sdk')));
 
