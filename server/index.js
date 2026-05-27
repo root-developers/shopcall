@@ -18,14 +18,23 @@ const ALLOWED_ORIGINS = process.env.CLIENT_URL
   : ['http://localhost:3000'];
 
 const io = new Server(server, {
-  cors: { origin: ALLOWED_ORIGINS, credentials: true }
+  cors: { origin: true, credentials: true }
 });
 
 // Security
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
-app.use(cors({ origin: ALLOWED_ORIGINS, credentials: true }));
 app.use(express.json({ limit: '1mb' }));
 app.use(express.text({ type: 'text/plain' }));
+
+// CORS: open for SDK routes (called from any customer store), restricted for dashboard
+const sdkPaths = ['/api/video/join-meeting', '/api/video/end-call', '/api/video/cancel-call', '/sdk'];
+app.use((req, res, next) => {
+  if (sdkPaths.some(p => req.path.startsWith(p))) {
+    cors({ origin: true, credentials: true })(req, res, next);
+  } else {
+    cors({ origin: ALLOWED_ORIGINS, credentials: true })(req, res, next);
+  }
+});
 
 // Trust proxy (Render is behind a reverse proxy)
 app.set('trust proxy', 1);
