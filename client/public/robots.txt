@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /agent-login
+Disallow: /call/
+
+Sitemap: https://shopcall.store/sitemap.xml

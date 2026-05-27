@@ -1,0 +1,14 @@
+{
+  "name": "shopcall",
+  "version": "1.0.0",
+  "description": "Live video commerce SDK for e-commerce",
+  "scripts": {
+    "server": "cd server && npm start",
+    "client": "cd client && npm start",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "install-all": "npm install && cd server && npm install && cd ../client && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "8.2.2"
+  }
+}
