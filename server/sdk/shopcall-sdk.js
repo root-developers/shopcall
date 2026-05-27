@@ -145,7 +145,37 @@
     try {
       const res = await fetch(`${API_BASE}/video/join-meeting`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sdkKey: storeKey, shopperName: name, shopperPhone: phone }) });
       const data = await res.json();
-      if (!res.ok) { errEl.textContent = data.error; errEl.style.display = 'block'; joinBtn.disabled = false; joinBtn.textContent = 'Start Video Call'; isJoining = false; return; }
+      if (!res.ok) {
+        if (data.error === 'limit_reached') {
+          // Show friendly unavailable message
+          const box = document.getElementById('sc-modal-box');
+          box.innerHTML = `
+            <h3>We'll call you back!</h3>
+            <p class="sub">Our team is currently unavailable. Leave your number and we'll connect shortly.</p>
+            <input id="sc-callback-phone" placeholder="Your phone number" type="tel" value="${phone}" />
+            <button class="sc-btn-primary" id="sc-callback-btn">Request Callback</button>
+            <button class="sc-btn-ghost" id="sc-callback-cancel">Cancel</button>
+            <p id="sc-callback-msg" style="font-size:12px;margin-top:8px;display:none"></p>
+          `;
+          document.getElementById('sc-callback-cancel').onclick = () => { closeModal(); setTimeout(() => location.reload(), 100); };
+          document.getElementById('sc-callback-btn').onclick = () => {
+            const ph = document.getElementById('sc-callback-phone').value;
+            if (!ph) { const m = document.getElementById('sc-callback-msg'); m.textContent = 'Please enter your phone number'; m.style.color = '#ef4444'; m.style.display = 'block'; return; }
+            const m = document.getElementById('sc-callback-msg');
+            m.textContent = '✓ We\\'ll connect with you soon!';
+            m.style.color = '#22c55e';
+            m.style.display = 'block';
+            document.getElementById('sc-callback-btn').disabled = true;
+            document.getElementById('sc-callback-btn').textContent = 'Submitted';
+            // Send phone to API for store owner to see
+            fetch(\`\${API_BASE}/video/join-meeting\`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sdkKey: storeKey, shopperName: name, shopperPhone: ph, callbackOnly: true }) }).catch(() => {});
+          };
+        } else {
+          errEl.textContent = data.message || data.error;
+          errEl.style.display = 'block';
+        }
+        joinBtn.disabled = false; joinBtn.textContent = 'Start Video Call'; isJoining = false; return;
+      }
 
       currentCallId = data.callId;
       closeModal();

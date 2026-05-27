@@ -1,17 +1,21 @@
 /* eslint-disable no-restricted-globals */
 
-let ringInterval = null;
-
 self.addEventListener('push', (event) => {
   const data = event.data ? event.data.json() : { title: 'ShopCall', body: 'New notification' };
 
-  // Show persistent notification with vibration
+  // Long vibration pattern that simulates continuous ringing (up to 30 seconds)
+  // Pattern: [vibrate, pause, vibrate, pause, ...] in ms
+  const ringPattern = [];
+  for (let i = 0; i < 30; i++) {
+    ringPattern.push(400, 200, 400, 600); // ring-ring-pause, repeated 30 times = ~48 sec
+  }
+
   event.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body,
       icon: '/logo192.png',
       badge: '/logo192.png',
-      vibrate: [500, 200, 500, 200, 500, 200, 500],
+      vibrate: ringPattern,
       tag: 'shopcall-call',
       renotify: true,
       requireInteraction: true,
@@ -21,44 +25,12 @@ self.addEventListener('push', (event) => {
         { action: 'reject', title: '✗ Reject' },
       ],
       data: { url: data.url || '/dashboard', callId: data.callId, apiBase: data.apiBase },
-    }).then(() => {
-      // Re-vibrate every 3 seconds to simulate continuous ringing
-      if (data.callId) {
-        clearInterval(ringInterval);
-        ringInterval = setInterval(() => {
-          self.registration.showNotification(data.title, {
-            body: data.body,
-            icon: '/logo192.png',
-            badge: '/logo192.png',
-            vibrate: [500, 200, 500, 200, 500],
-            tag: 'shopcall-call', // same tag = replaces previous (no stacking)
-            renotify: true,
-            requireInteraction: true,
-            silent: false,
-            actions: [
-              { action: 'accept', title: '✓ Accept' },
-              { action: 'reject', title: '✗ Reject' },
-            ],
-            data: { url: data.url || '/dashboard', callId: data.callId, apiBase: data.apiBase },
-          });
-        }, 3000);
-
-        // Auto-stop ringing after 60 seconds (call missed)
-        setTimeout(() => {
-          clearInterval(ringInterval);
-          ringInterval = null;
-        }, 60000);
-      }
     })
   );
 });
 
 self.addEventListener('notificationclick', (event) => {
-  // Stop ringing
-  clearInterval(ringInterval);
-  ringInterval = null;
   event.notification.close();
-
   const { url, callId, apiBase } = event.notification.data || {};
 
   if (event.action === 'reject' && callId && apiBase) {
@@ -85,11 +57,9 @@ self.addEventListener('notificationclick', (event) => {
   );
 });
 
-// Listen for messages from the app to stop ringing (when call accepted/rejected from dashboard)
+// Stop ring when app sends message
 self.addEventListener('message', (event) => {
   if (event.data === 'stop-ring') {
-    clearInterval(ringInterval);
-    ringInterval = null;
     self.registration.getNotifications({ tag: 'shopcall-call' }).then(notifications => {
       notifications.forEach(n => n.close());
     });

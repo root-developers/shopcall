@@ -45,7 +45,27 @@ router.post('/join-meeting', async (req, res) => {
     if (!store) return res.status(404).json({ error: 'Invalid SDK key' });
 
     if (store.plan === 'trial' && store.trialCustomersUsed >= store.trialLimit) {
-      return res.status(403).json({ error: 'Trial limit reached. Please upgrade.' });
+      // Notify store owner that a customer tried to connect
+      const push = require('./push');
+      const notify = req.app.get('notify');
+      const io = req.app.get('io');
+      const customerInfo = shopperName || 'A customer';
+      const phoneInfo = shopperPhone ? ` (${shopperPhone})` : '';
+
+      // Push notification
+      push.sendPush(store._id.toString(), {
+        title: '⚠️ Missed Lead - Trial Expired',
+        body: `${customerInfo}${phoneInfo} tried to connect but your trial limit is reached. Upgrade to continue!`,
+        url: '/dashboard',
+        apiBase: `${process.env.SERVER_URL || 'http://localhost:5000'}/api`,
+      }).catch(() => {});
+
+      // In-app notification
+      if (notify && io) {
+        notify.send(io, store._id.toString(), 'trial_expired_lead', 'Missed Lead!', `${customerInfo}${phoneInfo} tried to connect. Upgrade your plan to not miss customers.`);
+      }
+
+      return res.status(403).json({ error: 'limit_reached', message: 'Our team is currently unavailable. Please leave your number and we\'ll connect with you shortly.' });
     }
 
     // Create call as "pending" — NO VideoSDK room yet (saves billing)
