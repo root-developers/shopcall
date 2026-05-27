@@ -92,6 +92,7 @@ export default function Dashboard({ user, token, onLogout }) {
 
   const joinCall = async (call) => {
     stopRingtone();
+    navigator.serviceWorker?.controller?.postMessage('stop-ring');
     const res = await fetch(`${API}/video/agent-join`, { method: 'POST', headers: { ...h, 'Content-Type': 'application/json' }, body: JSON.stringify({ callId: call._id }) });
     const data = await res.json();
     if (res.ok) navigate(`/call/${data.meetingId}?token=${data.token}&callId=${call._id}`);
@@ -99,6 +100,7 @@ export default function Dashboard({ user, token, onLogout }) {
 
   const rejectCall = async (callId) => {
     stopRingtone();
+    navigator.serviceWorker?.controller?.postMessage('stop-ring');
     await fetch(`${API}/video/reject-call`, { method: 'POST', headers: { ...h, 'Content-Type': 'application/json' }, body: JSON.stringify({ callId }) });
     setIncoming(prev => prev.filter(c => c._id !== callId));
     load();
