@@ -1,8 +1,11 @@
 (function() {
+  console.log('[ShopCall SDK] Loading...');
   const script = document.currentScript;
+  if (!script) return console.error('[ShopCall SDK] ERROR: document.currentScript is null - script may be loaded async/deferred');
   const storeKey = script.getAttribute('data-store');
   const API_BASE = script.src.replace('/sdk/shopcall-sdk.js', '/api');
-  if (!storeKey) return console.error('ShopCall SDK: data-store attribute missing');
+  console.log('[ShopCall SDK] storeKey:', storeKey, 'API:', API_BASE);
+  if (!storeKey) return console.error('[ShopCall SDK] ERROR: data-store attribute missing');
 
   const btnText = script.getAttribute('data-text') || '📹 Live Shop';
   const btnBg = script.getAttribute('data-bg') || '#6366f1';
@@ -82,6 +85,7 @@
   btn.id = 'sc-btn';
   btn.textContent = btnText;
   document.body.appendChild(btn);
+  console.log('[ShopCall SDK] Button created:', btn.id, 'text:', btnText);
 
   // Modal
   const overlay = document.createElement('div');
