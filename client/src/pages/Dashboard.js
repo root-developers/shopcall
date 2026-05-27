@@ -580,7 +580,15 @@ function NotifBell({ token }) {
   const [notifs, setNotifs] = useState([]);
   const [open, setOpen] = useState(false);
   const [unread, setUnread] = useState(0);
+  const bellRef = useRef(null);
   const h = { Authorization: `Bearer ${token}` };
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e) => { if (bellRef.current && !bellRef.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
 
   useEffect(() => {
     if (!token) return;
@@ -610,7 +618,7 @@ function NotifBell({ token }) {
   };
 
   return (
-    <div style={{ position: 'relative', marginLeft: 'auto' }}>
+    <div ref={bellRef} style={{ position: 'relative', marginLeft: 'auto' }}>
       <button onClick={openPanel} style={{ background: '#111113', border: '1px solid #1f1f23', borderRadius: 6, color: '#f4f4f5', fontSize: 14, cursor: 'pointer', padding: '5px 9px', position: 'relative' }}>
         🔔
         {unread > 0 && <span style={{ position: 'absolute', top: -4, right: -4, background: '#ef4444', color: '#fff', fontSize: 9, fontWeight: 700, minWidth: 14, height: 14, borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{unread}</span>}
