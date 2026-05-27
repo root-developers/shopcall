@@ -4,10 +4,9 @@ self.addEventListener('push', (event) => {
   const data = event.data ? event.data.json() : { title: 'ShopCall', body: 'New notification' };
 
   // Long vibration pattern that simulates continuous ringing (up to 30 seconds)
-  // Pattern: [vibrate, pause, vibrate, pause, ...] in ms
   const ringPattern = [];
   for (let i = 0; i < 30; i++) {
-    ringPattern.push(400, 200, 400, 600); // ring-ring-pause, repeated 30 times = ~48 sec
+    ringPattern.push(400, 200, 400, 600);
   }
 
   event.waitUntil(
@@ -25,6 +24,11 @@ self.addEventListener('push', (event) => {
         { action: 'reject', title: '✗ Reject' },
       ],
       data: { url: data.url || '/dashboard', callId: data.callId, apiBase: data.apiBase },
+    }).then(() => {
+      // Message all open clients to start ringtone audio
+      self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients => {
+        clients.forEach(client => client.postMessage('start-ring'));
+      });
     })
   );
 });

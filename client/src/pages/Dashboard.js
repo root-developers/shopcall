@@ -51,26 +51,61 @@ export default function Dashboard({ user, token, onLogout }) {
     return () => clearInterval(i);
   }, [token]);
 
-  // Ringtone - loops until accepted/rejected
+  // Persistent AudioContext - keeps alive even when tab is minimized
+  const audioCtxRef = useRef(null);
   const ringtoneRef = useRef(null);
-  const ringtoneCtxRef = useRef(null);
+
+  // Initialize audio context on first user interaction (login = interaction)
+  useEffect(() => {
+    function initAudio() {
+      if (audioCtxRef.current) return;
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      audioCtxRef.current = ctx;
+      // Silent oscillator to keep audio context alive in background
+      const silent = ctx.createOscillator();
+      const gain = ctx.createGain();
+      gain.gain.value = 0; // completely silent
+      silent.connect(gain);
+      gain.connect(ctx.destination);
+      silent.start();
+    }
+    // Init on any click (handles autoplay policy)
+    document.addEventListener('click', initAudio, { once: true });
+    // Also try immediately (works if user already interacted)
+    initAudio();
+
+    // Listen for SW messages to start ringtone (when push arrives while minimized)
+    if (navigator.serviceWorker) {
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data === 'start-ring') startRingtone();
+        if (event.data === 'stop-ring') stopRingtone();
+      });
+    }
+
+    return () => {
+      document.removeEventListener('click', initAudio);
+      stopRingtone();
+      if (audioCtxRef.current) { audioCtxRef.current.close().catch(() => {}); audioCtxRef.current = null; }
+    };
+  }, []);
 
   function startRingtone() {
-    if (ringtoneRef.current) return; // already playing
+    if (ringtoneRef.current) return;
     try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      ringtoneCtxRef.current = ctx;
+      const ctx = audioCtxRef.current;
+      if (!ctx) return;
+      if (ctx.state === 'suspended') ctx.resume();
       function ring() {
-        if (!ringtoneCtxRef.current) return;
+        if (!audioCtxRef.current) return;
         const o = ctx.createOscillator();
         const g = ctx.createGain();
         o.connect(g); g.connect(ctx.destination);
-        o.frequency.value = 440; g.gain.value = 0.2;
+        o.frequency.value = 440; g.gain.value = 0.25;
         o.start(); o.stop(ctx.currentTime + 0.15);
         const o2 = ctx.createOscillator();
         const g2 = ctx.createGain();
         o2.connect(g2); g2.connect(ctx.destination);
-        o2.frequency.value = 660; g2.gain.value = 0.2;
+        o2.frequency.value = 660; g2.gain.value = 0.25;
         o2.start(ctx.currentTime + 0.2); o2.stop(ctx.currentTime + 0.35);
       }
       ring();
@@ -80,7 +115,6 @@ export default function Dashboard({ user, token, onLogout }) {
 
   function stopRingtone() {
     if (ringtoneRef.current) { clearInterval(ringtoneRef.current); ringtoneRef.current = null; }
-    if (ringtoneCtxRef.current) { ringtoneCtxRef.current.close().catch(() => {}); ringtoneCtxRef.current = null; }
   }
 
   // Start/stop ringtone based on incoming calls
