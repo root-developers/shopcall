@@ -48,6 +48,7 @@ export default function Landing() {
   const [showContact, setShowContact] = useState(false);
   const [showDemo, setShowDemo] = useState(false);
   const [formMsg, setFormMsg] = useState('');
+  const [mobileMenu, setMobileMenu] = useState(false);
   useEffect(() => { localStorage.setItem('theme', dark ? 'dark' : 'light'); }, [dark]);
   useEffect(() => {
     document.title = 'ShopCall - Live Video Shopping for E-commerce | Add Live Shop Button';
@@ -116,7 +117,14 @@ export default function Landing() {
         .lp-counter:hover{transform:scale(1.1)}
         @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.3)}}
         .lp-badge-pulse span:first-child{animation:pulse 2s ease-in-out infinite}
-        @media(max-width:900px){.lp-grid3{grid-template-columns:1fr 1fr !important}.lp-hide-md{display:none !important}.lp-footer-grid{grid-template-columns:1fr 1fr 1fr !important;gap:32px !important}}
+        .lp-hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;color:inherit}
+        .lp-hamburger svg{display:block}
+        .lp-mobile-nav{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:200}
+        .lp-mobile-nav-overlay{position:absolute;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px)}
+        .lp-mobile-nav-panel{position:absolute;top:0;right:0;width:280px;height:100%;padding:24px;display:flex;flex-direction:column;gap:8px;animation:lpSlideIn .25s ease}
+        @keyframes lpSlideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+        .lp-mobile-nav-close{align-self:flex-end;background:none;border:none;font-size:24px;cursor:pointer;padding:8px;color:inherit}
+        @media(max-width:900px){.lp-grid3{grid-template-columns:1fr 1fr !important}.lp-hide-md{display:none !important}.lp-hamburger{display:flex !important}.lp-mobile-nav.open{display:block !important}.lp-footer-grid{grid-template-columns:1fr 1fr 1fr !important;gap:32px !important}}
         @media(max-width:600px){.lp-grid3{grid-template-columns:1fr !important}.lp-grid4{grid-template-columns:1fr 1fr !important;gap:24px !important}.lp-hero-h{font-size:32px !important;line-height:1.2 !important}.lp-hero-p{font-size:17px !important}.lp-section{padding:56px 20px !important}.lp-cta-row{flex-direction:column;width:100%}.lp-cta-row>*{width:100%;text-align:center;justify-content:center}.lp-footer-grid{grid-template-columns:1fr 1fr !important;gap:24px !important}.lp-stats{gap:24px !important}.lp-hero-img{max-width:100% !important;border-radius:12px !important}.lp-mobile-img{width:140px !important}}
         @media(max-width:380px){.lp-hero-h{font-size:28px !important}.lp-grid4{grid-template-columns:1fr !important}.lp-footer-grid{grid-template-columns:1fr !important;gap:20px !important}.lp-stats{gap:16px !important}}
       `}</style>
@@ -138,10 +146,26 @@ export default function Landing() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <button onClick={() => setDark(!dark)} className="lp-theme" style={{ width: 36, height: 36, borderRadius: 8, border: `1px solid ${c.border}`, background: c.card, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, cursor: 'pointer', color: c.text }}>{dark ? '☀️' : '🌙'}</button>
             <Link to="/login" className="lp-hide-md" style={{ color: c.muted, fontSize: 15, fontWeight: 500, textDecoration: 'none', padding: '10px 14px' }}>Log in</Link>
-            <Link to="/signup" className="lp-cta" style={{ background: '#6366f1', color: '#fff', padding: '10px 20px', borderRadius: 8, fontSize: 15, fontWeight: 600, textDecoration: 'none' }}>Get Started</Link>
+            <Link to="/signup" className="lp-cta lp-hide-md" style={{ background: '#6366f1', color: '#fff', padding: '10px 20px', borderRadius: 8, fontSize: 15, fontWeight: 600, textDecoration: 'none' }}>Get Started</Link>
+            <button onClick={() => setMobileMenu(true)} className="lp-hamburger" aria-label="Open menu">
+              <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
           </div>
         </div>
       </nav>
+
+      {/* MOBILE NAV */}
+      <div className={`lp-mobile-nav${mobileMenu ? ' open' : ''}`}>
+        <div className="lp-mobile-nav-overlay" onClick={() => setMobileMenu(false)} />
+        <div className="lp-mobile-nav-panel" style={{ background: dark ? '#111113' : '#fff' }}>
+          <button className="lp-mobile-nav-close" onClick={() => setMobileMenu(false)} aria-label="Close menu">×</button>
+          {['Features','How it works','Pricing'].map(l => (
+            <a key={l} href={`#${l.toLowerCase().replace(/ /g,'-')}`} onClick={() => setMobileMenu(false)} style={{ color: c.text, fontSize: 16, fontWeight: 500, textDecoration: 'none', padding: '12px 0', borderBottom: `1px solid ${c.border}` }}>{l}</a>
+          ))}
+          <Link to="/login" onClick={() => setMobileMenu(false)} style={{ color: c.muted, fontSize: 16, fontWeight: 500, textDecoration: 'none', padding: '12px 0' }}>Log in</Link>
+          <Link to="/signup" onClick={() => setMobileMenu(false)} style={{ background: '#6366f1', color: '#fff', padding: '12px 20px', borderRadius: 8, fontSize: 15, fontWeight: 600, textDecoration: 'none', textAlign: 'center', marginTop: 8 }}>Get Started</Link>
+        </div>
+      </div>
 
       {/* HERO */}
       <section className="lp-section" style={{ padding: '120px 28px 70px', maxWidth: 1200, margin: '0 auto' }}>
