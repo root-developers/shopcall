@@ -51,6 +51,8 @@ const siteContentSchema = new mongoose.Schema({
     copyright: { type: String, default: '© 2026 ShopCall. All rights reserved.' },
     socials: [{ platform: String, url: String }],
   },
+  // Landing page scale (percentage)
+  scale: { type: Number, default: 100 },
 }, { timestamps: true });
 
 module.exports = mongoose.model('SiteContent', siteContentSchema);

@@ -40,6 +40,7 @@ const DEFAULT_CONTENT = {
     copyright: '© 2026 ShopCall Technologies Pvt. Ltd. All rights reserved. Made with ❤️ in India.',
     socials: [{ platform: 'Twitter', url: 'https://twitter.com/shopcall_in' }, { platform: 'LinkedIn', url: 'https://linkedin.com/company/shopcall' }, { platform: 'Instagram', url: 'https://instagram.com/shopcall.in' }, { platform: 'YouTube', url: 'https://youtube.com/@shopcall' }],
   },
+  scale: 100,
 };
 
 export default function Landing() {
@@ -57,6 +58,7 @@ export default function Landing() {
   }, []);
   const c = dark ? D : L;
   const { hero, stats, platforms, features, steps, pricing, finalCta, footer } = content;
+  const scale = content.scale || 100;
 
   // Scroll reveal observer
   useEffect(() => {
@@ -68,7 +70,7 @@ export default function Landing() {
   });
 
   return (
-    <div role="main" style={{ background: c.bg, color: c.text, transition: 'all 0.4s ease', minHeight: '100vh' }}>
+    <div role="main" style={{ background: c.bg, color: c.text, transition: 'all 0.4s ease', minHeight: '100vh', zoom: scale / 100 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         *{box-sizing:border-box;margin:0;padding:0}

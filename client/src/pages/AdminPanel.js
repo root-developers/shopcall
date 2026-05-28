@@ -384,8 +384,8 @@ function SiteEditor({ token }) {
 
       {/* Tabs */}
       <div style={{ display: 'flex', gap: 4, marginBottom: 16, flexWrap: 'wrap' }}>
-        {['hero', 'stats', 'features', 'steps', 'pricing', 'finalCta', 'footer'].map(t => (
-          <button key={t} onClick={() => setTab(t)} style={{ padding: '6px 14px', borderRadius: 6, border: 'none', background: tab === t ? '#6366f1' : '#1f1f23', color: tab === t ? '#fff' : '#71717a', fontSize: 11, fontWeight: 500, cursor: 'pointer', textTransform: 'capitalize' }}>{t === 'finalCta' ? 'Final CTA' : t}</button>
+        {['hero', 'stats', 'features', 'steps', 'pricing', 'finalCta', 'footer', 'scale'].map(t => (
+          <button key={t} onClick={() => setTab(t)} style={{ padding: '6px 14px', borderRadius: 6, border: 'none', background: tab === t ? '#6366f1' : '#1f1f23', color: tab === t ? '#fff' : '#71717a', fontSize: 11, fontWeight: 500, cursor: 'pointer', textTransform: 'capitalize' }}>{t === 'finalCta' ? 'Final CTA' : t === 'scale' ? 'Scale %' : t}</button>
         ))}
       </div>
 
@@ -561,6 +561,20 @@ function SiteEditor({ token }) {
             ))}
             <button onClick={() => setContent({ ...content, footer: { ...content.footer, socials: [...(content.footer?.socials || []), { platform: 'Twitter', url: '' }] } })} style={{ background: 'transparent', color: '#6366f1', border: 'none', fontSize: 11, cursor: 'pointer', marginTop: 4 }}>+ Add social</button>
           </div>
+        </div>
+      )}
+
+      {/* SCALE */}
+      {tab === 'scale' && (
+        <div style={cardStyle}>
+          <h3 style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>Landing Page Scale</h3>
+          <p style={{ fontSize: 11, color: '#71717a', marginBottom: 16 }}>Control the overall zoom/scale of the landing page. This applies to all text, fonts, and elements.</p>
+          <div style={{ display: 'flex', gap: 8 }}>
+            {[80, 90, 100, 110, 120].map(v => (
+              <button key={v} onClick={() => setContent({ ...content, scale: v })} style={{ padding: '10px 18px', borderRadius: 8, border: (content.scale || 100) === v ? '2px solid #6366f1' : '1px solid #1f1f23', background: (content.scale || 100) === v ? 'rgba(99,102,241,.15)' : '#09090b', color: (content.scale || 100) === v ? '#a78bfa' : '#71717a', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>{v}%</button>
+            ))}
+          </div>
+          <p style={{ fontSize: 11, color: '#52525b', marginTop: 12 }}>Current: {content.scale || 100}% · Click "Save All" to apply</p>
         </div>
       )}
     </div>
