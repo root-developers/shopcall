@@ -5,6 +5,8 @@ const ADM_NAV = [
   { id: 'overview', label: 'Overview', icon: '◎' },
   { id: 'stores', label: 'Stores', icon: '◈' },
   { id: 'billing', label: 'Billing', icon: '◇' },
+  { id: 'requests', label: 'Requests', icon: '✉' },
+  { id: 'leads', label: 'Leads', icon: '◆' },
   { id: 'site', label: 'Site Content', icon: '✎' },
 ];
 
@@ -111,6 +113,12 @@ export default function AdminPanel({ token, onLogout }) {
         {page === 'billing' && (
           <BillingAdmin token={token} stores={stores} />
         )}
+
+        {/* REQUESTS */}
+        {page === 'requests' && <RequestsPage token={token} />}
+
+        {/* LEADS */}
+        {page === 'leads' && <LeadsPage token={token} />}
 
         {/* SITE CONTENT */}
         {page === 'site' && (
@@ -315,7 +323,21 @@ function SiteEditor({ token }) {
   const h = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
 
   useEffect(() => {
-    fetch(`${API}/site`).then(r => r.json()).then(setContent).catch(() => {});
+    fetch(`${API}/site`).then(r => r.json()).then(d => {
+      const defaults = {
+        footer: {
+          tagline: 'Live video commerce for Indian e-commerce. Help your customers see, ask, and buy — all in one call. Built for conversions, not just conversations.',
+          columns: [
+            { title: 'Product', links: [{ label: 'Features', url: '#features' }, { label: 'Pricing', url: '#pricing' }, { label: 'How it Works', url: '#how-it-works' }, { label: 'SDK Integration', url: '/docs' }, { label: 'Demo Store', url: '/demo' }] },
+            { title: 'Company', links: [{ label: 'About Us', url: '/about' }, { label: 'Blog', url: '/blog' }, { label: 'Careers', url: '/careers' }, { label: 'Contact Us', url: '/contact' }, { label: 'Partner Program', url: '/partners' }] },
+            { title: 'Legal', links: [{ label: 'Terms of Service', url: '/terms' }, { label: 'Privacy Policy', url: '/privacy' }, { label: 'Cancellation & Refund', url: '/refund' }, { label: 'Shipping Policy', url: '/shipping' }, { label: 'Grievance Redressal', url: '/grievance' }] },
+          ],
+          copyright: '© 2026 ShopCall Technologies Pvt. Ltd. All rights reserved. Made with ❤️ in India.',
+          socials: [{ platform: 'Twitter', url: 'https://twitter.com/shopcall_in' }, { platform: 'LinkedIn', url: 'https://linkedin.com/company/shopcall' }, { platform: 'Instagram', url: 'https://instagram.com/shopcall.in' }, { platform: 'YouTube', url: 'https://youtube.com/@shopcall' }],
+        }
+      };
+      setContent({ ...defaults, ...d, footer: d.footer || defaults.footer });
+    }).catch(() => {});
   }, []);
 
   const save = async () => {
@@ -362,7 +384,7 @@ function SiteEditor({ token }) {
 
       {/* Tabs */}
       <div style={{ display: 'flex', gap: 4, marginBottom: 16, flexWrap: 'wrap' }}>
-        {['hero', 'stats', 'features', 'steps', 'pricing', 'finalCta'].map(t => (
+        {['hero', 'stats', 'features', 'steps', 'pricing', 'finalCta', 'footer'].map(t => (
           <button key={t} onClick={() => setTab(t)} style={{ padding: '6px 14px', borderRadius: 6, border: 'none', background: tab === t ? '#6366f1' : '#1f1f23', color: tab === t ? '#fff' : '#71717a', fontSize: 11, fontWeight: 500, cursor: 'pointer', textTransform: 'capitalize' }}>{t === 'finalCta' ? 'Final CTA' : t}</button>
         ))}
       </div>
@@ -485,6 +507,144 @@ function SiteEditor({ token }) {
             <div key={key} style={{ marginBottom: 10 }}>
               <label style={labelStyle}>{label}</label>
               <input value={content.finalCta[key]} onChange={e => updateFinalCta(key, e.target.value)} style={inputStyle} />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* FOOTER */}
+      {tab === 'footer' && (
+        <div>
+          <div style={cardStyle}>
+            <h3 style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>Footer Settings</h3>
+            <div style={{ marginBottom: 10 }}>
+              <label style={labelStyle}>Tagline</label>
+              <textarea value={content.footer?.tagline || ''} onChange={e => setContent({ ...content, footer: { ...content.footer, tagline: e.target.value } })} style={{ ...inputStyle, minHeight: 60, resize: 'vertical' }} />
+            </div>
+            <div style={{ marginBottom: 10 }}>
+              <label style={labelStyle}>Copyright</label>
+              <input value={content.footer?.copyright || ''} onChange={e => setContent({ ...content, footer: { ...content.footer, copyright: e.target.value } })} style={inputStyle} />
+            </div>
+          </div>
+
+          {/* Columns */}
+          <h3 style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>Footer Columns</h3>
+          {(content.footer?.columns || []).map((col, ci) => (
+            <div key={ci} style={{ ...cardStyle, position: 'relative' }}>
+              <button onClick={() => { const cols = [...(content.footer?.columns || [])]; cols.splice(ci, 1); setContent({ ...content, footer: { ...content.footer, columns: cols } }); }} style={{ position: 'absolute', top: 10, right: 10, background: '#ef4444', color: '#fff', border: 'none', borderRadius: 4, padding: '2px 8px', fontSize: 10, cursor: 'pointer' }}>×</button>
+              <div style={{ marginBottom: 10 }}>
+                <label style={labelStyle}>Column Title</label>
+                <input value={col.title} onChange={e => { const cols = [...(content.footer?.columns || [])]; cols[ci] = { ...cols[ci], title: e.target.value }; setContent({ ...content, footer: { ...content.footer, columns: cols } }); }} style={inputStyle} />
+              </div>
+              <label style={labelStyle}>Links</label>
+              {(col.links || []).map((link, li) => (
+                <div key={li} style={{ display: 'flex', gap: 4, marginBottom: 4 }}>
+                  <input value={link.label} placeholder="Label" onChange={e => { const cols = [...(content.footer?.columns || [])]; const links = [...cols[ci].links]; links[li] = { ...links[li], label: e.target.value }; cols[ci] = { ...cols[ci], links }; setContent({ ...content, footer: { ...content.footer, columns: cols } }); }} style={{ ...inputStyle, flex: 1 }} />
+                  <input value={link.url} placeholder="URL" onChange={e => { const cols = [...(content.footer?.columns || [])]; const links = [...cols[ci].links]; links[li] = { ...links[li], url: e.target.value }; cols[ci] = { ...cols[ci], links }; setContent({ ...content, footer: { ...content.footer, columns: cols } }); }} style={{ ...inputStyle, flex: 1 }} />
+                  <button onClick={() => { const cols = [...(content.footer?.columns || [])]; const links = [...cols[ci].links]; links.splice(li, 1); cols[ci] = { ...cols[ci], links }; setContent({ ...content, footer: { ...content.footer, columns: cols } }); }} style={{ background: '#ef4444', color: '#fff', border: 'none', borderRadius: 4, padding: '0 8px', fontSize: 10, cursor: 'pointer' }}>×</button>
+                </div>
+              ))}
+              <button onClick={() => { const cols = [...(content.footer?.columns || [])]; const links = [...(cols[ci].links || []), { label: 'New Link', url: '/' }]; cols[ci] = { ...cols[ci], links }; setContent({ ...content, footer: { ...content.footer, columns: cols } }); }} style={{ background: 'transparent', color: '#6366f1', border: 'none', fontSize: 11, cursor: 'pointer', marginTop: 4 }}>+ Add link</button>
+            </div>
+          ))}
+          <button onClick={() => setContent({ ...content, footer: { ...content.footer, columns: [...(content.footer?.columns || []), { title: 'New Column', links: [{ label: 'Link', url: '/' }] }] } })} style={{ background: '#1f1f23', color: '#a1a1aa', border: '1px dashed #27272a', borderRadius: 8, padding: '10px 16px', fontSize: 12, cursor: 'pointer', width: '100%', marginBottom: 16 }}>+ Add Column</button>
+
+          {/* Socials */}
+          <h3 style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>Social Links</h3>
+          <div style={cardStyle}>
+            {(content.footer?.socials || []).map((s, si) => (
+              <div key={si} style={{ display: 'flex', gap: 4, marginBottom: 4 }}>
+                <input value={s.platform} placeholder="Platform" onChange={e => { const socs = [...(content.footer?.socials || [])]; socs[si] = { ...socs[si], platform: e.target.value }; setContent({ ...content, footer: { ...content.footer, socials: socs } }); }} style={{ ...inputStyle, width: 100 }} />
+                <input value={s.url} placeholder="URL" onChange={e => { const socs = [...(content.footer?.socials || [])]; socs[si] = { ...socs[si], url: e.target.value }; setContent({ ...content, footer: { ...content.footer, socials: socs } }); }} style={{ ...inputStyle, flex: 1 }} />
+                <button onClick={() => { const socs = [...(content.footer?.socials || [])]; socs.splice(si, 1); setContent({ ...content, footer: { ...content.footer, socials: socs } }); }} style={{ background: '#ef4444', color: '#fff', border: 'none', borderRadius: 4, padding: '0 8px', fontSize: 10, cursor: 'pointer' }}>×</button>
+              </div>
+            ))}
+            <button onClick={() => setContent({ ...content, footer: { ...content.footer, socials: [...(content.footer?.socials || []), { platform: 'Twitter', url: '' }] } })} style={{ background: 'transparent', color: '#6366f1', border: 'none', fontSize: 11, cursor: 'pointer', marginTop: 4 }}>+ Add social</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function RequestsPage({ token }) {
+  const [requests, setRequests] = useState([]);
+  const h = { Authorization: `Bearer ${token}` };
+
+  useEffect(() => {
+    fetch(`${API}/requests/contact`, { headers: h }).then(r => r.json()).then(setRequests).catch(() => {});
+  }, []);
+
+  const updateStatus = async (id, status) => {
+    await fetch(`${API}/requests/contact/${id}`, { method: 'PATCH', headers: { ...h, 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) });
+    setRequests(requests.map(r => r._id === id ? { ...r, status } : r));
+  };
+
+  const statusColor = s => s === 'new' ? '#f59e0b' : s === 'contacted' ? '#6366f1' : '#22c55e';
+
+  return (
+    <div>
+      <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 20 }}>Contact Requests ({requests.length})</h2>
+      {requests.length === 0 ? <p style={{ color: '#52525b', fontSize: 13, textAlign: 'center', padding: 40 }}>No contact requests yet</p> : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {requests.map(r => (
+            <div key={r._id} style={{ background: '#111113', borderRadius: 10, padding: '16px 20px', border: '1px solid #1f1f23', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+              <div>
+                <p style={{ fontSize: 14, fontWeight: 500 }}>{r.name}</p>
+                <p style={{ fontSize: 12, color: '#71717a', marginTop: 2 }}>{r.phone} · {new Date(r.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+              </div>
+              <select value={r.status} onChange={e => updateStatus(r._id, e.target.value)} style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #1f1f23', background: '#09090b', color: statusColor(r.status), fontSize: 12, fontWeight: 500 }}>
+                <option value="new">New</option>
+                <option value="contacted">Contacted</option>
+                <option value="closed">Closed</option>
+              </select>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function LeadsPage({ token }) {
+  const [leads, setLeads] = useState([]);
+  const h = { Authorization: `Bearer ${token}` };
+
+  useEffect(() => {
+    fetch(`${API}/requests/leads`, { headers: h }).then(r => r.json()).then(setLeads).catch(() => {});
+  }, []);
+
+  const updateStatus = async (id, status) => {
+    await fetch(`${API}/requests/leads/${id}`, { method: 'PATCH', headers: { ...h, 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) });
+    setLeads(leads.map(l => l._id === id ? { ...l, status } : l));
+  };
+
+  const statusColor = s => s === 'new' ? '#f59e0b' : s === 'scheduled' ? '#6366f1' : s === 'completed' ? '#22c55e' : '#ef4444';
+
+  return (
+    <div>
+      <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 20 }}>Demo Leads ({leads.length})</h2>
+      {leads.length === 0 ? <p style={{ color: '#52525b', fontSize: 13, textAlign: 'center', padding: 40 }}>No demo leads yet</p> : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {leads.map(l => (
+            <div key={l._id} style={{ background: '#111113', borderRadius: 10, padding: '16px 20px', border: '1px solid #1f1f23' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 8 }}>
+                <div>
+                  <p style={{ fontSize: 14, fontWeight: 500 }}>{l.name}</p>
+                  <p style={{ fontSize: 12, color: '#71717a', marginTop: 2 }}>{l.email} · {l.phone}</p>
+                </div>
+                <select value={l.status} onChange={e => updateStatus(l._id, e.target.value)} style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #1f1f23', background: '#09090b', color: statusColor(l.status), fontSize: 12, fontWeight: 500 }}>
+                  <option value="new">New</option>
+                  <option value="scheduled">Scheduled</option>
+                  <option value="completed">Completed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+              <div style={{ display: 'flex', gap: 16, fontSize: 12, color: '#a1a1aa' }}>
+                <span>📅 {l.preferredDate}</span>
+                <span>🕐 {l.preferredTime}</span>
+                <span style={{ marginLeft: 'auto', color: '#52525b' }}>{new Date(l.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>
+              </div>
             </div>
           ))}
         </div>

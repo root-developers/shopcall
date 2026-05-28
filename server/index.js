@@ -63,6 +63,7 @@ app.use('/api/push', require('./routes/push'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/billing', require('./routes/billing'));
 app.use('/api/site', require('./routes/site'));
+app.use('/api/requests', require('./routes/requests'));
 
 const notifications = require('./routes/notifications');
 app.use('/api/notifications', notifications);

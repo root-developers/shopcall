@@ -41,6 +41,16 @@ const siteContentSchema = new mongoose.Schema({
     button: { type: String, default: 'Get your SDK key' },
     note: { type: String, default: 'No credit card · Free 5 calls · Cancel anytime' },
   },
+  // Footer
+  footer: {
+    tagline: { type: String, default: 'We believe better conversations lead to better conversions. Building to level up customer engagement.' },
+    columns: [{
+      title: String,
+      links: [{ label: String, url: String }],
+    }],
+    copyright: { type: String, default: '© 2026 ShopCall. All rights reserved.' },
+    socials: [{ platform: String, url: String }],
+  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('SiteContent', siteContentSchema);
