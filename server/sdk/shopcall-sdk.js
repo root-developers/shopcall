@@ -567,7 +567,7 @@
     #sc-waiting .sc-waiting-hint{font-size:12px;color:#71717a}
 
     /* Local PiP — minimized mode override */
-    #sc-call.minimized .sc-vid-pip{width:82px;height:112px;top:8px;right:8px;border-radius:10px}
+    #sc-call.minimized .sc-vid-pip{width:82px;height:112px;top:30px;right:8px;border-radius:10px}
 
     /* Chat */
     #sc-chat{width:320px;flex-shrink:0;display:none;flex-direction:column;background:rgba(15,15,22,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.06);border-radius:16px;margin-bottom:8px;overflow:hidden;animation:scSlide .25s cubic-bezier(.4,0,.2,1)}
@@ -620,14 +620,22 @@
     .sc-more-item{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;border:none;background:transparent;color:#d4d4d8;font-size:13px;border-radius:8px;cursor:pointer;text-align:left;transition:background .12s;font-family:inherit}
     .sc-more-item:hover{background:rgba(255,255,255,.06);color:#fff}
 
-    /* Minimize chrome */
-    .sc-min-chrome{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:linear-gradient(180deg,rgba(0,0,0,.55),transparent);z-index:10;font-size:10px;font-weight:600;color:#f4f4f5;cursor:move}
-    #sc-call.minimized .sc-min-chrome{display:flex !important}
-    .sc-min-chrome:not(.shown){display:none}
-    .sc-min-actions{display:flex;gap:4px}
-    .sc-min-btn{width:24px;height:24px;border-radius:6px;border:none;background:rgba(255,255,255,.14);color:#f4f4f5;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .12s}
-    .sc-min-btn:hover{background:rgba(255,255,255,.22)}
-    .sc-min-btn-danger{background:rgba(239,68,68,.85)}
+    /* Minimize — top status */
+    .sc-min-top{position:absolute;top:0;left:0;right:0;display:none;align-items:center;gap:6px;padding:8px 12px;background:linear-gradient(180deg,rgba(0,0,0,.6),transparent);z-index:10;font-size:11px;font-weight:600;color:#f4f4f5;pointer-events:none}
+    #sc-call.minimized .sc-min-top{display:flex}
+    .sc-min-live-dot{width:6px;height:6px;border-radius:50%;background:#10b981;box-shadow:0 0 6px rgba(16,185,129,.7);animation:scPulse 2s ease infinite}
+
+    /* Minimize — bottom controls bar */
+    .sc-min-bar{position:absolute;bottom:0;left:0;right:0;display:none;align-items:center;justify-content:space-between;padding:10px 10px;background:linear-gradient(0deg,rgba(0,0,0,.75) 60%,transparent);z-index:10;cursor:default}
+    #sc-call.minimized .sc-min-bar{display:flex}
+    .sc-min-left{display:flex;gap:6px}
+    .sc-min-btn{width:28px;height:28px;border-radius:8px;border:none;background:rgba(255,255,255,.15);color:#f4f4f5;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .12s,transform .12s}
+    .sc-min-btn:hover{background:rgba(255,255,255,.25)}
+    .sc-min-btn:active{transform:scale(.9)}
+    .sc-min-btn-expand{width:36px;height:36px;border-radius:10px;background:rgba(99,102,241,.85);color:#fff;box-shadow:0 4px 12px rgba(99,102,241,.4)}
+    .sc-min-btn-expand:hover{background:rgba(99,102,241,1)}
+    .sc-min-btn-danger{background:rgba(239,68,68,.85);margin-left:auto}
+    .sc-min-btn-danger:hover{background:rgba(239,68,68,1)}
 
     /* Toast */
     #sc-toast{position:fixed;bottom:110px;left:50%;transform:translateX(-50%);padding:10px 16px;border-radius:11px;font-size:13px;font-weight:500;background:rgba(22,22,30,.96);border:1px solid rgba(255,255,255,.08);color:#f4f4f5;backdrop-filter:blur(16px);box-shadow:0 18px 48px rgba(0,0,0,.5);z-index:100002;display:none;animation:scToast .25s ease}
@@ -708,9 +716,10 @@
       #sc-waiting .sc-waiting-hint{font-size:11px}
       .sc-spinner{width:26px;height:26px;border-width:2.5px}
       #sc-toast{bottom:90px;font-size:12px;padding:8px 14px;border-radius:9px}
-      .sc-min-chrome{padding:6px 8px;font-size:9px}
-      .sc-min-btn{width:22px;height:22px;border-radius:5px}
-      .sc-min-actions{gap:3px}
+      .sc-min-top{padding:6px 10px;font-size:9px}
+      .sc-min-bar{padding:8px 8px}
+      .sc-min-btn{width:24px;height:24px;border-radius:6px}
+      .sc-min-btn-expand{width:30px;height:30px;border-radius:8px}
     }
 
     /* ── xs (<380px) — small phones ── */
@@ -745,9 +754,10 @@
       #sc-waiting .sc-waiting-hint{font-size:10px}
       .sc-spinner{width:22px;height:22px;border-width:2px}
       #sc-toast{bottom:80px;font-size:11px;padding:7px 12px;border-radius:8px;max-width:85vw}
-      .sc-min-chrome{padding:5px 7px;font-size:9px}
-      .sc-min-btn{width:20px;height:20px;border-radius:5px}
-      .sc-min-actions{gap:2px}
+      .sc-min-top{padding:5px 8px;font-size:9px}
+      .sc-min-bar{padding:7px 7px}
+      .sc-min-btn{width:22px;height:22px;border-radius:5px}
+      .sc-min-btn-expand{width:28px;height:28px;border-radius:7px}
       .sc-msg-bubble{padding:7px 10px;font-size:12px}
     }
 
@@ -818,14 +828,17 @@
   const callEl = document.createElement('div');
   callEl.id = 'sc-call';
   callEl.innerHTML = `
-    <div class="sc-min-chrome">
+    <div class="sc-min-top">
+      <span class="sc-min-live-dot"></span>
       <span>Live · <span id="sc-min-timer">0:00</span></span>
-      <div class="sc-min-actions">
+    </div>
+    <div class="sc-min-bar">
+      <div class="sc-min-left">
         <button class="sc-min-btn" id="sc-min-mic" title="Mic">${SVG.mic}</button>
         <button class="sc-min-btn" id="sc-min-cam" title="Camera">${SVG.cam}</button>
-        <button class="sc-min-btn" id="sc-min-expand" title="Expand">${SVG.expand}</button>
-        <button class="sc-min-btn sc-min-btn-danger" id="sc-min-end" title="End">${SVG.hang}</button>
       </div>
+      <button class="sc-min-btn sc-min-btn-expand" id="sc-min-expand" title="Expand">${SVG.expand.replace('width="14"','width="16"').replace('height="14"','height="16"')}</button>
+      <button class="sc-min-btn sc-min-btn-danger" id="sc-min-end" title="End">${SVG.hang}</button>
     </div>
 
     <header id="sc-top">
@@ -1446,7 +1459,7 @@
     let drag = false, ox = 0, oy = 0, sx = 0, sy = 0;
     callEl.addEventListener('pointerdown', (e) => {
       if (!callEl.classList.contains('minimized')) return;
-      if (e.target.closest('.sc-min-btn')) return;
+      if (e.target.closest('.sc-min-btn') || e.target.closest('.sc-min-bar')) return;
       drag = true;
       ox = minPos?.x || 0; oy = minPos?.y || 0;
       sx = e.clientX; sy = e.clientY;
