@@ -48,7 +48,7 @@ export default function AgentDashboard({ agent, token, onLogout }) {
       body: JSON.stringify({ meetingId: call.meetingId, callId: call._id })
     });
     const data = await res.json();
-    navigate(`/call/${call.meetingId}?token=${data.token}&callId=${call._id}`);
+    if (res.ok) navigate(`/call/${data.meetingId}?token=${data.token}&callId=${call._id}`);
   };
 
   if (!agent) return <div style={{ minHeight: '100vh', background: '#09090b', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#71717a' }}>Loading...</div>;
