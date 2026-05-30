@@ -954,19 +954,36 @@
   // ── Helpers ──────────────────────────────────────────────────────────────
   async function applyCustomTrack(track) {
     if (!meeting) throw new Error('No meeting');
-    // Try the various changeWebcam signatures that VideoSDK has used across versions
     try { return await meeting.changeWebcam({ customTrack: track }); } catch (e) {}
     try { return await meeting.changeWebcam(track); } catch (e) {}
     try {
       meeting.disableWebcam();
-      await new Promise(r => setTimeout(r, 250));
+      await new Promise(r => setTimeout(r, 300));
       return meeting.enableWebcam(track);
     } catch (e) { throw e; }
   }
   async function applyDeviceId(deviceId) {
     if (!meeting) throw new Error('No meeting');
+    // Try changeWebcam with deviceId directly
     try { return await meeting.changeWebcam(deviceId); } catch (e) {}
-    try { return await meeting.changeWebcam({ deviceId }); } catch (e) { throw e; }
+    try { return await meeting.changeWebcam({ deviceId }); } catch (e) {}
+    // Fallback: disable and re-enable with a custom track from the new device
+    try {
+      meeting.disableWebcam();
+      await new Promise(r => setTimeout(r, 300));
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { deviceId: { exact: deviceId }, width: { ideal: 1280 }, height: { ideal: 720 } }
+      });
+      const track = stream.getVideoTracks()[0];
+      meeting.enableWebcam(track);
+      return;
+    } catch (e) { throw e; }
+  }
+  async function getAvailableCameras() {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      return devices.filter(d => d.kind === 'videoinput');
+    } catch (e) { return []; }
   }
 
   function showToast(msg, type = 'info', ms = 2500) {
@@ -1210,10 +1227,7 @@
     meeting.on('meeting-joined', async () => {
       startTimer();
       waiting.style.display = 'none';
-      try {
-        const r = meeting.getWebcams ? meeting.getWebcams() : [];
-        cameras = Array.isArray(r) ? r : (await r) || [];
-      } catch (e) { cameras = []; }
+      cameras = await getAvailableCameras();
       if (cameras.length > 0) activeCamId = cameras[0].deviceId;
       bindLocalStreams();
     });
@@ -1296,10 +1310,7 @@
 
   flipBtn.onclick = async () => {
     if (!meeting) return;
-    try {
-      const r = meeting.getWebcams ? meeting.getWebcams() : [];
-      cameras = Array.isArray(r) ? r : (await r) || [];
-    } catch (e) {}
+    cameras = await getAvailableCameras();
     if (cameras.length < 2) { showToast('Only one camera detected', 'warn'); return; }
     const current = activeCamId;
     const next = cameras.find(c => c.deviceId !== current) || cameras[0];
@@ -1316,7 +1327,7 @@
       }
       activeCamId = next.deviceId;
       showToast('Camera switched', 'success');
-    } catch (e) { showToast('Switch failed', 'error'); }
+    } catch (e) { console.error('[ShopCall] Flip error:', e); showToast('Switch failed', 'error'); }
   };
 
   blurBtn.onclick = async () => {
