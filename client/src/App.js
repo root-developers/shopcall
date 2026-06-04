@@ -9,6 +9,15 @@ import AgentLogin from './pages/AgentLogin';
 import AgentDashboard from './pages/AgentDashboard';
 import AdminLogin from './pages/AdminLogin';
 import AdminPanel from './pages/AdminPanel';
+import Layout from './pages/Layout';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import Blog from './pages/Blog';
+import Policy from './pages/Policy';
+import Careers from './pages/Careers';
+import Partners from './pages/Partners';
+import Docs from './pages/Docs';
+import Demo from './pages/Demo';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
@@ -36,6 +45,18 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/about" element={<Layout><About /></Layout>} />
+        <Route path="/contact" element={<Layout><Contact /></Layout>} />
+        <Route path="/blog" element={<Layout><Blog /></Layout>} />
+        <Route path="/privacy" element={<Layout><Policy /></Layout>} />
+        <Route path="/terms" element={<Layout><Policy /></Layout>} />
+        <Route path="/refund" element={<Layout><Policy /></Layout>} />
+        <Route path="/shipping" element={<Layout><Policy /></Layout>} />
+        <Route path="/grievance" element={<Layout><Policy /></Layout>} />
+        <Route path="/careers" element={<Layout><Careers /></Layout>} />
+        <Route path="/partners" element={<Layout><Partners /></Layout>} />
+        <Route path="/docs" element={<Layout><Docs /></Layout>} />
+        <Route path="/demo" element={<Layout><Demo /></Layout>} />
         <Route path="/login" element={token && role === 'owner' ? <Navigate to="/dashboard" /> : <Login onLogin={login} />} />
         <Route path="/signup" element={token && role === 'owner' ? <Navigate to="/dashboard" /> : <Signup onLogin={login} />} />
         <Route path="/dashboard" element={token && role === 'owner' ? <Dashboard user={user} token={token} onLogout={logout} /> : <Navigate to="/login" />} />

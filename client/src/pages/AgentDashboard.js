@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API } from '../App';
 import usePush from '../usePush';
+import LogoIcon from '../components/LogoIcon';
 
 export default function AgentDashboard({ agent, token, onLogout }) {
   const [incoming, setIncoming] = useState([]);
@@ -73,7 +74,7 @@ export default function AgentDashboard({ agent, token, onLogout }) {
       {/* Header */}
       <header className="ag-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 28px', borderBottom: '1px solid #1f1f23', background: '#0c0c0e', position: 'sticky', top: 0, zIndex: 50 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 30, height: 30, borderRadius: 7, background: 'linear-gradient(135deg,#6366f1,#a78bfa)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800, color: '#fff' }}>S</div>
+          <LogoIcon size={30} />
           <span style={{ fontSize: 16, fontWeight: 700 }}>ShopCall</span>
           <span style={{ fontSize: 12, color: '#71717a', background: '#1f1f23', padding: '3px 8px', borderRadius: 5, fontWeight: 500 }}>Agent</span>
         </div>

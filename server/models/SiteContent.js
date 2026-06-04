@@ -3,13 +3,13 @@ const mongoose = require('mongoose');
 const siteContentSchema = new mongoose.Schema({
   // Hero section
   hero: {
-    badge: { type: String, default: 'Now in public beta' },
-    title: { type: String, default: 'Turn your website into a' },
-    titleHighlight: { type: String, default: 'live showroom' },
-    subtitle: { type: String, default: 'One script tag adds a "Live Shop" button to your store. Customers click, you connect via video, show products, and close the deal — all without them leaving your site.' },
-    cta: { type: String, default: 'Start free' },
-    ctaSecondary: { type: String, default: 'Watch demo' },
-    note: { type: String, default: 'Free forever for 5 calls · No credit card' },
+    badge: { type: String },
+    title: { type: String },
+    titleHighlight: { type: String },
+    subtitle: { type: String },
+    cta: { type: String },
+    ctaSecondary: { type: String },
+    note: { type: String },
   },
   // Stats strip
   stats: [{ v: String, l: String }],
@@ -32,27 +32,86 @@ const siteContentSchema = new mongoose.Schema({
     price: String,
     sub: String,
     features: [String],
-    popular: { type: Boolean, default: false },
+    popular: { type: Boolean },
   }],
   // Final CTA
   finalCta: {
-    title: { type: String, default: 'Ready to go live?' },
-    subtitle: { type: String, default: 'Join 500+ Indian brands selling more with live video commerce. Setup takes less than 2 minutes.' },
-    button: { type: String, default: 'Get your SDK key' },
-    note: { type: String, default: 'No credit card · Free 5 calls · Cancel anytime' },
+    title: { type: String },
+    subtitle: { type: String },
+    button: { type: String },
+    note: { type: String },
   },
   // Footer
   footer: {
-    tagline: { type: String, default: 'We believe better conversations lead to better conversions. Building to level up customer engagement.' },
+    tagline: { type: String },
     columns: [{
       title: String,
       links: [{ label: String, url: String }],
     }],
-    copyright: { type: String, default: '© 2026 ShopCall. All rights reserved.' },
+    copyright: { type: String },
     socials: [{ platform: String, url: String }],
   },
   // Landing page scale (percentage)
-  scale: { type: Number, default: 100 },
+  scale: { type: Number },
+
+  // --- EXTENDED SUBPAGES CONTENT ---
+  // About Page
+  about: {
+    title: { type: String },
+    highlight: { type: String },
+    subtitle: { type: String },
+    storyTitle: { type: String },
+    storyContent1: { type: String },
+    storyContent2: { type: String },
+    principles: [{
+      t: String,
+      d: String
+    }]
+  },
+
+  // Careers Page
+  careers: {
+    title: { type: String },
+    highlight: { type: String },
+    subtitle: { type: String },
+    roles: [{
+      title: String,
+      team: String,
+      location: String,
+      type: String,
+      desc: String
+    }]
+  },
+
+  // Partners Page
+  partners: {
+    title: { type: String },
+    highlight: { type: String },
+    subtitle: { type: String },
+    perks: [{
+      t: String,
+      d: String
+    }]
+  },
+
+  // Docs Page
+  docs: {
+    title: { type: String },
+    subtitle: { type: String },
+    scriptSnippet: { type: String }
+  },
+
+  // Demo Page
+  demo: {
+    title: { type: String },
+    subtitle: { type: String },
+    products: [{
+      name: String,
+      price: String,
+      desc: String,
+      img: String
+    }]
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model('SiteContent', siteContentSchema);

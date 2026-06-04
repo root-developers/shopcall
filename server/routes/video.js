@@ -2,6 +2,7 @@ const router = require('express').Router();
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Call = require('../models/Call');
+const TestedLead = require('../models/TestedLead');
 const auth = require('../middleware/auth');
 
 // Token for server-side API calls (room creation) - needs version 2
@@ -77,6 +78,16 @@ router.post('/join-meeting', async (req, res) => {
       status: 'pending',
       startedAt: new Date(),
     });
+
+    // Capture as TestedLead since a live SDK test is initiated
+    try {
+      await TestedLead.create({
+        name: shopperName || 'Shopper',
+        phone: shopperPhone || 'N/A'
+      });
+    } catch (leadErr) {
+      console.error('Failed to auto-capture tested lead in video/join-meeting:', leadErr);
+    }
 
     // Increment trial usage
     if (store.plan === 'trial') {

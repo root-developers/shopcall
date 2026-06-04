@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API } from '../App';
 import usePush from '../usePush';
+import LogoIcon from '../components/LogoIcon';
 import { io as ioClient } from 'socket.io-client';
 
 const NAV = [
@@ -181,7 +182,7 @@ export default function Dashboard({ user, token, onLogout }) {
       <aside className="d-sidebar" style={{ width: 240, background: '#0c0c0e', borderRight: '1px solid #1f1f23', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, bottom: 0, left: sidebar ? 0 : -240, zIndex: 50, transition: 'left .25s cubic-bezier(.4,0,.2,1)' }}>
         <div style={{ padding: '20px 16px', borderBottom: '1px solid #1f1f23' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{ width: 28, height: 28, borderRadius: 7, background: 'linear-gradient(135deg,#6366f1,#a78bfa)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800, color: '#fff' }}>S</div>
+            <LogoIcon size={28} />
             <span style={{ fontSize: 15, fontWeight: 700 }}>ShopCall</span>
           </div>
           <p style={{ fontSize: 11, color: '#52525b', marginTop: 6, fontWeight: 500 }}>{user.storeName}</p>

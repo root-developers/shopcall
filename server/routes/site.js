@@ -14,7 +14,7 @@ const DEFAULTS = {
     note: 'Free forever for 5 calls · No credit card',
   },
   stats: [
-    { v: '500+', l: 'Stores' },
+    { v: '46.2%', l: 'Market CAGR' },
     { v: '10K+', l: 'Calls' },
     { v: '3.2x', l: 'More conversions' },
     { v: '<2min', l: 'Setup' },
@@ -41,7 +41,7 @@ const DEFAULTS = {
   ],
   finalCta: {
     title: 'Ready to go live?',
-    subtitle: 'Join 500+ Indian brands selling more with live video commerce. Setup takes less than 2 minutes.',
+    subtitle: 'Position your brand at the forefront of India\'s live commerce boom. Setup takes less than 2 minutes.',
     button: 'Get your SDK key',
     note: 'No credit card · Free 5 calls · Cancel anytime',
   },
@@ -56,6 +56,53 @@ const DEFAULTS = {
     socials: [{ platform: 'Twitter', url: 'https://twitter.com/shopcall_in' }, { platform: 'LinkedIn', url: 'https://linkedin.com/company/shopcall' }, { platform: 'Instagram', url: 'https://instagram.com/shopcall.in' }, { platform: 'YouTube', url: 'https://youtube.com/@shopcall' }],
   },
   scale: 100,
+  about: {
+    title: 'Humanizing the',
+    highlight: 'Online Showroom',
+    subtitle: 'ShopCall was founded to bridge the massive trust and conversion gap between physical retail stores and static digital shopping websites.',
+    storyTitle: 'Why ShopCall?',
+    storyContent1: 'In traditional physical retail, a sales agent greets customers, shows products live, answers questions instantly, and builds trust. In online shopping, customers are left with flat pictures and text descriptions, leading to low conversion rates and high return rates.',
+    storyContent2: 'We created ShopCall to bring back the human touch. Our SDK allows any merchant—from boutique fashion sellers to premium electronics stores—to invite customers into their showroom with just one click.',
+    principles: [
+      { t: 'Frictionless Experience', d: 'No downloads, signups, or logins. A customer clicks a button and is instantly in a video call inside their browser.' },
+      { t: 'Built for Scale', d: 'Engineered on top of world-class video infrastructure that functions perfectly on mobile and low-bandwidth networks.' },
+      { t: 'Merchant First', d: 'Simple dashboard analytics, agent logins, and flexible custom configurations tailored for individual brand identities.' }
+    ]
+  },
+  careers: {
+    title: 'Build the future of',
+    highlight: 'live retail',
+    subtitle: 'We are on a mission to bring human connection back to online shopping. If you love building fast, high-impact products, we would love to have you on board.',
+    roles: [
+      { title: 'Senior WebRTC Engineer', team: 'Engineering', location: 'Kolkata, India / Remote', type: 'Full-time', desc: 'Help us optimize and scale our video infrastructure. Deep knowledge of WebRTC, peer-to-peer signaling, and TURN/STUN servers is required.' },
+      { title: 'Frontend Engineer (React)', team: 'Product', location: 'Kolkata, India / Remote', type: 'Full-time', desc: 'Craft premium dashboards, real-time calling interfaces, and embeddable customer widgets. Experience with CSS animations and React is key.' },
+      { title: 'Sales & Merchant Success Manager', team: 'Growth', location: 'Mumbai/Bangalore, India', type: 'Full-time', desc: 'Onboard and consult boutique stores, jewelry brands, and luxury e-commerce sellers in adopting live video commerce.' }
+    ]
+  },
+  partners: {
+    title: 'Grow your agency with',
+    highlight: 'Live Commerce',
+    subtitle: 'Partner with ShopCall to introduce premium live video shopping tools to your clients, Shopify stores, and custom e-commerce brands.',
+    perks: [
+      { t: '20% Recurring Revenue Share', d: 'Earn a lifetime 20% recurring commission on all subscription payments made by the stores you refer.' },
+      { t: 'Technical Co-marketing & Support', d: 'Get direct priority access to our WebRTC engineering teams and features tailored for your enterprise clients.' },
+      { t: 'Partner Sandbox Account', d: 'Access specialized developer sandboxes to demonstrate and test video widget configurations for your leads.' }
+    ]
+  },
+  docs: {
+    title: 'SDK Integration Guide',
+    subtitle: 'Add a floating Live Video Commerce widget to any store with a single line of JavaScript.',
+    scriptSnippet: '<script \n  src="https://shopcall.store/sdk/shopcall-sdk.js" \n  data-store="YOUR_SDK_KEY">\n</script>'
+  },
+  demo: {
+    title: 'AURA BOUTIQUE',
+    subtitle: 'EXCLUSIVE HANDLOOM COLLECTION',
+    products: [
+      { name: 'Royal Banarasi Silk Saree', price: '₹14,999', desc: 'Handwoven pure silk Banarasi saree with rich zari border and floral motifs. Perfect for bridal events.', img: '🌸' },
+      { name: 'Kundan Antique Gold Necklace', price: '₹48,500', desc: 'Traditional Kundan studded choker necklace set in gold plating with matching earrings.', img: '💎' },
+      { name: 'Designer Georgette Lehenga', price: '₹34,999', desc: 'Ethereal emerald green lehenga choli set with intricate hand embroidery and sequins work.', img: '👗' }
+    ]
+  }
 };
 
 // Admin auth middleware
@@ -70,13 +117,28 @@ function adminAuth(req, res, next) {
   } catch { res.status(401).json({ error: 'Invalid token' }); }
 }
 
+function deepMerge(target, source) {
+  if (!source) return target;
+  const result = { ...target };
+  for (const key in source) {
+    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+      result[key] = deepMerge(target[key] || {}, source[key]);
+    } else if (source[key] !== undefined && source[key] !== null) {
+      result[key] = source[key];
+    }
+  }
+  return result;
+}
+
 // GET /api/site - public, returns landing page content
 router.get('/', async (req, res) => {
   try {
     let content = await SiteContent.findOne().lean();
-    if (!content) content = DEFAULTS;
-    else content = { ...DEFAULTS, ...content };
-    res.json(content);
+    if (!content) {
+      return res.json(DEFAULTS);
+    }
+    const merged = deepMerge(DEFAULTS, content);
+    res.json(merged);
   } catch (err) {
     res.json(DEFAULTS);
   }
@@ -86,14 +148,21 @@ router.get('/', async (req, res) => {
 router.put('/', adminAuth, async (req, res) => {
   try {
     const data = req.body;
-    let content = await SiteContent.findOne();
+    delete data._id;
+    delete data.__v;
+    delete data.createdAt;
+    delete data.updatedAt;
+
+    const content = await SiteContent.findOne();
     if (content) {
-      Object.assign(content, data);
-      await content.save();
+      // Completely replace the existing document to overwrite modified arrays and fields cleanly
+      await SiteContent.replaceOne({ _id: content._id }, data);
     } else {
-      content = await SiteContent.create({ ...DEFAULTS, ...data });
+      await SiteContent.create(data);
     }
-    res.json(content);
+    const updated = await SiteContent.findOne().lean();
+    const merged = deepMerge(DEFAULTS, updated);
+    res.json(merged);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

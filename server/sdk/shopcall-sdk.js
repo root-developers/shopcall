@@ -1108,14 +1108,21 @@
 
   async function startJoinFlow() {
     if (isJoining) return;
+    const name = ($('sc-name').value || '').trim();
+    const phone = ($('sc-phone').value || '').trim();
+    const errEl = $('sc-error');
+    errEl.classList.remove('active');
+
+    if (!name || !phone) {
+      errEl.textContent = 'Name and phone number are required.';
+      errEl.classList.add('active');
+      return;
+    }
+
     isJoining = true;
     const joinBtn = $('sc-join-btn');
     joinBtn.disabled = true;
     joinBtn.innerHTML = '<div class="sc-mini-spin"></div><span>Connecting…</span>';
-    const name = $('sc-name').value || 'Shopper';
-    const phone = $('sc-phone').value || '';
-    const errEl = $('sc-error');
-    errEl.classList.remove('active');
 
     try {
       const res = await fetch(`${API_BASE}/video/join-meeting`, {

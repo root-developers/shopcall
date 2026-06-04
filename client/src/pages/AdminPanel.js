@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { API } from '../App';
+import LogoIcon from '../components/LogoIcon';
 
 const ADM_NAV = [
   { id: 'overview', label: 'Overview', icon: '◎' },
@@ -7,6 +8,7 @@ const ADM_NAV = [
   { id: 'billing', label: 'Billing', icon: '◇' },
   { id: 'requests', label: 'Requests', icon: '✉' },
   { id: 'leads', label: 'Leads', icon: '◆' },
+  { id: 'tested_leads', label: 'Live Tested Leads', icon: '⚡' },
   { id: 'site', label: 'Site Content', icon: '✎' },
 ];
 
@@ -46,7 +48,7 @@ export default function AdminPanel({ token, onLogout }) {
       <aside className="adm-sidebar" style={{ width: 220, background: '#0c0c0e', borderRight: '1px solid #1f1f23', padding: '20px 8px', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, bottom: 0, left: sidebar ? 0 : -220, zIndex: 50, transition: 'left .25s cubic-bezier(.4,0,.2,1)' }}>
         <div style={{ padding: '0 12px', marginBottom: 24 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{ width: 26, height: 26, borderRadius: 6, background: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 800, color: '#fff' }}>⚡</div>
+            <LogoIcon size={26} />
             <span style={{ fontSize: 14, fontWeight: 700 }}>Admin Panel</span>
           </div>
         </div>
@@ -119,6 +121,9 @@ export default function AdminPanel({ token, onLogout }) {
 
         {/* LEADS */}
         {page === 'leads' && <LeadsPage token={token} />}
+
+        {/* LIVE TESTED LEADS */}
+        {page === 'tested_leads' && <TestedLeadsPage token={token} />}
 
         {/* SITE CONTENT */}
         {page === 'site' && (
@@ -334,9 +339,65 @@ function SiteEditor({ token }) {
           ],
           copyright: '© 2026 ShopCall Technologies Pvt. Ltd. All rights reserved. Made with ❤️ in India.',
           socials: [{ platform: 'Twitter', url: 'https://twitter.com/shopcall_in' }, { platform: 'LinkedIn', url: 'https://linkedin.com/company/shopcall' }, { platform: 'Instagram', url: 'https://instagram.com/shopcall.in' }, { platform: 'YouTube', url: 'https://youtube.com/@shopcall' }],
+        },
+        about: {
+          title: 'Humanizing the',
+          highlight: 'Online Showroom',
+          subtitle: 'ShopCall was founded to bridge the massive trust and conversion gap between physical retail stores and static digital shopping websites.',
+          storyTitle: 'Why ShopCall?',
+          storyContent1: 'In traditional physical retail, a sales agent greets customers, shows products live, answers questions instantly, and builds trust. In online shopping, customers are left with flat pictures and text descriptions, leading to low conversion rates and high return rates.',
+          storyContent2: 'We created ShopCall to bring back the human touch. Our SDK allows any merchant—from boutique fashion sellers to premium electronics stores—to invite customers into their showroom with just one click.',
+          principles: [
+            { t: 'Frictionless Experience', d: 'No downloads, signups, or logins. A customer clicks a button and is instantly in a video call inside their browser.' },
+            { t: 'Built for Scale', d: 'Engineered on top of world-class video infrastructure that functions perfectly on mobile and low-bandwidth networks.' },
+            { t: 'Merchant First', d: 'Simple dashboard analytics, agent logins, and flexible custom configurations tailored for individual brand identities.' }
+          ]
+        },
+        careers: {
+          title: 'Build the future of',
+          highlight: 'live retail',
+          subtitle: 'We are on a mission to bring human connection back to online shopping. If you love building fast, high-impact products, we would love to have you on board.',
+          roles: [
+            { title: 'Senior WebRTC Engineer', team: 'Engineering', location: 'Kolkata, India / Remote', type: 'Full-time', desc: 'Help us optimize and scale our video infrastructure. Deep knowledge of WebRTC, peer-to-peer signaling, and TURN/STUN servers is required.' },
+            { title: 'Frontend Engineer (React)', team: 'Product', location: 'Kolkata, India / Remote', type: 'Full-time', desc: 'Craft premium dashboards, real-time calling interfaces, and embeddable customer widgets. Experience with CSS animations and React is key.' },
+            { title: 'Sales & Merchant Success Manager', team: 'Growth', location: 'Mumbai/Bangalore, India', type: 'Full-time', desc: 'Onboard and consult boutique stores, jewelry brands, and luxury e-commerce sellers in adopting live video commerce.' }
+          ]
+        },
+        partners: {
+          title: 'Grow your agency with',
+          highlight: 'Live Commerce',
+          subtitle: 'Partner with ShopCall to introduce premium live video shopping tools to your clients, Shopify stores, and custom e-commerce brands.',
+          perks: [
+            { t: '20% Recurring Revenue Share', d: 'Earn a lifetime 20% recurring commission on all subscription payments made by the stores you refer.' },
+            { t: 'Technical Co-marketing & Support', d: 'Get direct priority access to our WebRTC engineering teams and features tailored for your enterprise clients.' },
+            { t: 'Partner Sandbox Account', d: 'Access specialized developer sandboxes to demonstrate and test video widget configurations for your leads.' }
+          ]
+        },
+        docs: {
+          title: 'SDK Integration Guide',
+          subtitle: 'Add a floating Live Video Commerce widget to any store with a single line of JavaScript.',
+          scriptSnippet: '<script \n  src="https://shopcall.store/sdk/shopcall-sdk.js" \n  data-store="YOUR_SDK_KEY">\n</script>'
+        },
+        demo: {
+          title: 'AURA BOUTIQUE',
+          subtitle: 'EXCLUSIVE HANDLOOM COLLECTION',
+          products: [
+            { name: 'Royal Banarasi Silk Saree', price: '₹14,999', desc: 'Handwoven pure silk Banarasi saree with rich zari border and floral motifs. Perfect for bridal events.', img: '🌸' },
+            { name: 'Kundan Antique Gold Necklace', price: '₹48,500', desc: 'Traditional Kundan studded choker necklace set in gold plating with matching earrings.', img: '💎' },
+            { name: 'Designer Georgette Lehenga', price: '₹34,999', desc: 'Ethereal emerald green lehenga choli set with intricate hand embroidery and sequins work.', img: '👗' }
+          ]
         }
       };
-      setContent({ ...defaults, ...d, footer: d.footer || defaults.footer });
+      setContent({
+        ...defaults,
+        ...d,
+        footer: d.footer || defaults.footer,
+        about: d.about || defaults.about,
+        careers: d.careers || defaults.careers,
+        partners: d.partners || defaults.partners,
+        docs: d.docs || defaults.docs,
+        demo: d.demo || defaults.demo
+      });
     }).catch(() => {});
   }, []);
 
@@ -358,6 +419,28 @@ function SiteEditor({ token }) {
   const updatePricing = (i, key, val) => { const p = [...content.pricing]; p[i] = { ...p[i], [key]: val }; setContent({ ...content, pricing: p }); };
   const updatePricingFeature = (pi, fi, val) => { const p = [...content.pricing]; const f = [...p[pi].features]; f[fi] = val; p[pi] = { ...p[pi], features: f }; setContent({ ...content, pricing: p }); };
   const updateStat = (i, key, val) => { const s = [...content.stats]; s[i] = { ...s[i], [key]: val }; setContent({ ...content, stats: s }); };
+
+  const updateAbout = (key, val) => setContent({ ...content, about: { ...content.about, [key]: val } });
+  const updateAboutPrinciple = (i, key, val) => { const p = [...content.about.principles]; p[i] = { ...p[i], [key]: val }; setContent({ ...content, about: { ...content.about, principles: p } }); };
+  const addAboutPrinciple = () => setContent({ ...content, about: { ...content.about, principles: [...content.about.principles, { t: 'New Principle', d: 'Description' }] } });
+  const removeAboutPrinciple = (i) => setContent({ ...content, about: { ...content.about, principles: content.about.principles.filter((_, idx) => idx !== i) } });
+
+  const updateCareers = (key, val) => setContent({ ...content, careers: { ...content.careers, [key]: val } });
+  const updateCareersRole = (i, key, val) => { const r = [...content.careers.roles]; r[i] = { ...r[i], [key]: val }; setContent({ ...content, careers: { ...content.careers, roles: r } }); };
+  const addCareersRole = () => setContent({ ...content, careers: { ...content.careers, roles: [...content.careers.roles, { title: 'Role Title', team: 'Team', location: 'Location', type: 'Full-time', desc: 'Description' }] } });
+  const removeCareersRole = (i) => setContent({ ...content, careers: { ...content.careers, roles: content.careers.roles.filter((_, idx) => idx !== i) } });
+
+  const updatePartners = (key, val) => setContent({ ...content, partners: { ...content.partners, [key]: val } });
+  const updatePartnersPerk = (i, key, val) => { const p = [...content.partners.perks]; p[i] = { ...p[i], [key]: val }; setContent({ ...content, partners: { ...content.partners, perks: p } }); };
+  const addPartnersPerk = () => setContent({ ...content, partners: { ...content.partners, perks: [...content.partners.perks, { t: 'New Perk', d: 'Description' }] } });
+  const removePartnersPerk = (i) => setContent({ ...content, partners: { ...content.partners, perks: content.partners.perks.filter((_, idx) => idx !== i) } });
+
+  const updateDocs = (key, val) => setContent({ ...content, docs: { ...content.docs, [key]: val } });
+
+  const updateDemo = (key, val) => setContent({ ...content, demo: { ...content.demo, [key]: val } });
+  const updateDemoProduct = (i, key, val) => { const p = [...content.demo.products]; p[i] = { ...p[i], [key]: val }; setContent({ ...content, demo: { ...content.demo, products: p } }); };
+  const addDemoProduct = () => setContent({ ...content, demo: { ...content.demo, products: [...content.demo.products, { name: 'Product Name', price: '₹0', desc: 'Description', img: '🛍️' }] } });
+  const removeDemoProduct = (i) => setContent({ ...content, demo: { ...content.demo, products: content.demo.products.filter((_, idx) => idx !== i) } });
 
   const addFeature = () => setContent({ ...content, features: [...content.features, { icon: '✨', title: 'New Feature', desc: 'Description' }] });
   const removeFeature = (i) => setContent({ ...content, features: content.features.filter((_, idx) => idx !== i) });
@@ -384,7 +467,7 @@ function SiteEditor({ token }) {
 
       {/* Tabs */}
       <div style={{ display: 'flex', gap: 4, marginBottom: 16, flexWrap: 'wrap' }}>
-        {['hero', 'stats', 'features', 'steps', 'pricing', 'finalCta', 'footer', 'scale'].map(t => (
+        {['hero', 'stats', 'features', 'steps', 'pricing', 'finalCta', 'footer', 'about', 'careers', 'partners', 'docs', 'demo', 'scale'].map(t => (
           <button key={t} onClick={() => setTab(t)} style={{ padding: '6px 14px', borderRadius: 6, border: 'none', background: tab === t ? '#6366f1' : '#1f1f23', color: tab === t ? '#fff' : '#71717a', fontSize: 11, fontWeight: 500, cursor: 'pointer', textTransform: 'capitalize' }}>{t === 'finalCta' ? 'Final CTA' : t === 'scale' ? 'Scale %' : t}</button>
         ))}
       </div>
@@ -564,6 +647,116 @@ function SiteEditor({ token }) {
         </div>
       )}
 
+      {/* ABOUT */}
+      {tab === 'about' && (
+        <div>
+          <div style={cardStyle}>
+            <h3 style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>About Page Hero</h3>
+            <div style={{ marginBottom: 10 }}><label style={labelStyle}>Header Title</label><input value={content.about?.title || ''} onChange={e => updateAbout('title', e.target.value)} style={inputStyle} /></div>
+            <div style={{ marginBottom: 10 }}><label style={labelStyle}>Header Highlight</label><input value={content.about?.highlight || ''} onChange={e => updateAbout('highlight', e.target.value)} style={inputStyle} /></div>
+            <div style={{ marginBottom: 10 }}><label style={labelStyle}>Subtitle</label><textarea value={content.about?.subtitle || ''} onChange={e => updateAbout('subtitle', e.target.value)} style={{ ...inputStyle, minHeight: 60, resize: 'vertical' }} /></div>
+          </div>
+          <div style={cardStyle}>
+            <h3 style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>Story Section</h3>
+            <div style={{ marginBottom: 10 }}><label style={labelStyle}>Story Title</label><input value={content.about?.storyTitle || ''} onChange={e => updateAbout('storyTitle', e.target.value)} style={inputStyle} /></div>
+            <div style={{ marginBottom: 10 }}><label style={labelStyle}>Paragraph 1</label><textarea value={content.about?.storyContent1 || ''} onChange={e => updateAbout('storyContent1', e.target.value)} style={{ ...inputStyle, minHeight: 60, resize: 'vertical' }} /></div>
+            <div style={{ marginBottom: 10 }}><label style={labelStyle}>Paragraph 2</label><textarea value={content.about?.storyContent2 || ''} onChange={e => updateAbout('storyContent2', e.target.value)} style={{ ...inputStyle, minHeight: 60, resize: 'vertical' }} /></div>
+          </div>
+          <h3 style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>Core Principles</h3>
+          {(content.about?.principles || []).map((p, idx) => (
+            <div key={idx} style={{ ...cardStyle, position: 'relative' }}>
+              <button onClick={() => removeAboutPrinciple(idx)} style={{ position: 'absolute', top: 10, right: 10, background: '#ef4444', color: '#fff', border: 'none', borderRadius: 4, padding: '2px 8px', fontSize: 10, cursor: 'pointer' }}>×</button>
+              <div style={{ marginBottom: 10 }}><label style={labelStyle}>Title</label><input value={p.t || ''} onChange={e => updateAboutPrinciple(idx, 't', e.target.value)} style={inputStyle} /></div>
+              <div><label style={labelStyle}>Description</label><input value={p.d || ''} onChange={e => updateAboutPrinciple(idx, 'd', e.target.value)} style={inputStyle} /></div>
+            </div>
+          ))}
+          <button onClick={addAboutPrinciple} style={{ background: '#1f1f23', color: '#a1a1aa', border: '1px dashed #27272a', borderRadius: 8, padding: '10px 16px', fontSize: 12, cursor: 'pointer', width: '100%', marginBottom: 16 }}>+ Add Principle</button>
+        </div>
+      )}
+
+      {/* CAREERS */}
+      {tab === 'careers' && (
+        <div>
+          <div style={cardStyle}>
+            <h3 style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>Careers Hero</h3>
+            <div style={{ marginBottom: 10 }}><label style={labelStyle}>Header Title</label><input value={content.careers?.title || ''} onChange={e => updateCareers('title', e.target.value)} style={inputStyle} /></div>
+            <div style={{ marginBottom: 10 }}><label style={labelStyle}>Header Highlight</label><input value={content.careers?.highlight || ''} onChange={e => updateCareers('highlight', e.target.value)} style={inputStyle} /></div>
+            <div style={{ marginBottom: 10 }}><label style={labelStyle}>Subtitle</label><textarea value={content.careers?.subtitle || ''} onChange={e => updateCareers('subtitle', e.target.value)} style={{ ...inputStyle, minHeight: 60, resize: 'vertical' }} /></div>
+          </div>
+          <h3 style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>Open Roles</h3>
+          {(content.careers?.roles || []).map((r, idx) => (
+            <div key={idx} style={{ ...cardStyle, position: 'relative' }}>
+              <button onClick={() => removeCareersRole(idx)} style={{ position: 'absolute', top: 10, right: 10, background: '#ef4444', color: '#fff', border: 'none', borderRadius: 4, padding: '2px 8px', fontSize: 10, cursor: 'pointer' }}>×</button>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 10 }}>
+                <div><label style={labelStyle}>Role Title</label><input value={r.title || ''} onChange={e => updateCareersRole(idx, 'title', e.target.value)} style={inputStyle} /></div>
+                <div><label style={labelStyle}>Team</label><input value={r.team || ''} onChange={e => updateCareersRole(idx, 'team', e.target.value)} style={inputStyle} /></div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 10 }}>
+                <div><label style={labelStyle}>Location</label><input value={r.location || ''} onChange={e => updateCareersRole(idx, 'location', e.target.value)} style={inputStyle} /></div>
+                <div><label style={labelStyle}>Type</label><input value={r.type || ''} onChange={e => updateCareersRole(idx, 'type', e.target.value)} style={inputStyle} /></div>
+              </div>
+              <div><label style={labelStyle}>Description</label><textarea value={r.desc || ''} onChange={e => updateCareersRole(idx, 'desc', e.target.value)} style={{ ...inputStyle, minHeight: 40 }} /></div>
+            </div>
+          ))}
+          <button onClick={addCareersRole} style={{ background: '#1f1f23', color: '#a1a1aa', border: '1px dashed #27272a', borderRadius: 8, padding: '10px 16px', fontSize: 12, cursor: 'pointer', width: '100%', marginBottom: 16 }}>+ Add Role</button>
+        </div>
+      )}
+
+      {/* PARTNERS */}
+      {tab === 'partners' && (
+        <div>
+          <div style={cardStyle}>
+            <h3 style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>Partners Hero</h3>
+            <div style={{ marginBottom: 10 }}><label style={labelStyle}>Header Title</label><input value={content.partners?.title || ''} onChange={e => updatePartners('title', e.target.value)} style={inputStyle} /></div>
+            <div style={{ marginBottom: 10 }}><label style={labelStyle}>Header Highlight</label><input value={content.partners?.highlight || ''} onChange={e => updatePartners('highlight', e.target.value)} style={inputStyle} /></div>
+            <div style={{ marginBottom: 10 }}><label style={labelStyle}>Subtitle</label><textarea value={content.partners?.subtitle || ''} onChange={e => updatePartners('subtitle', e.target.value)} style={{ ...inputStyle, minHeight: 60, resize: 'vertical' }} /></div>
+          </div>
+          <h3 style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>Program Perks</h3>
+          {(content.partners?.perks || []).map((p, idx) => (
+            <div key={idx} style={{ ...cardStyle, position: 'relative' }}>
+              <button onClick={() => removePartnersPerk(idx)} style={{ position: 'absolute', top: 10, right: 10, background: '#ef4444', color: '#fff', border: 'none', borderRadius: 4, padding: '2px 8px', fontSize: 10, cursor: 'pointer' }}>×</button>
+              <div style={{ marginBottom: 10 }}><label style={labelStyle}>Perk Title</label><input value={p.t || ''} onChange={e => updatePartnersPerk(idx, 't', e.target.value)} style={inputStyle} /></div>
+              <div><label style={labelStyle}>Perk Description</label><input value={p.d || ''} onChange={e => updatePartnersPerk(idx, 'd', e.target.value)} style={inputStyle} /></div>
+            </div>
+          ))}
+          <button onClick={addPartnersPerk} style={{ background: '#1f1f23', color: '#a1a1aa', border: '1px dashed #27272a', borderRadius: 8, padding: '10px 16px', fontSize: 12, cursor: 'pointer', width: '100%', marginBottom: 16 }}>+ Add Perk</button>
+        </div>
+      )}
+
+      {/* DOCS */}
+      {tab === 'docs' && (
+        <div style={cardStyle}>
+          <h3 style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>Docs Page</h3>
+          <div style={{ marginBottom: 10 }}><label style={labelStyle}>Header Title</label><input value={content.docs?.title || ''} onChange={e => updateDocs('title', e.target.value)} style={inputStyle} /></div>
+          <div style={{ marginBottom: 10 }}><label style={labelStyle}>Subtitle</label><textarea value={content.docs?.subtitle || ''} onChange={e => updateDocs('subtitle', e.target.value)} style={{ ...inputStyle, minHeight: 60 }} /></div>
+          <div><label style={labelStyle}>Script Snippet</label><textarea value={content.docs?.scriptSnippet || ''} onChange={e => updateDocs('scriptSnippet', e.target.value)} style={{ ...inputStyle, minHeight: 100, fontFamily: 'monospace' }} /></div>
+        </div>
+      )}
+
+      {/* DEMO */}
+      {tab === 'demo' && (
+        <div>
+          <div style={cardStyle}>
+            <h3 style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>Demo Store Branding</h3>
+            <div style={{ marginBottom: 10 }}><label style={labelStyle}>Store Name (Title)</label><input value={content.demo?.title || ''} onChange={e => updateDemo('title', e.target.value)} style={inputStyle} /></div>
+            <div><label style={labelStyle}>Tagline / Collection (Subtitle)</label><input value={content.demo?.subtitle || ''} onChange={e => updateDemo('subtitle', e.target.value)} style={inputStyle} /></div>
+          </div>
+          <h3 style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>Products</h3>
+          {(content.demo?.products || []).map((p, idx) => (
+            <div key={idx} style={{ ...cardStyle, position: 'relative' }}>
+              <button onClick={() => removeDemoProduct(idx)} style={{ position: 'absolute', top: 10, right: 10, background: '#ef4444', color: '#fff', border: 'none', borderRadius: 4, padding: '2px 8px', fontSize: 10, cursor: 'pointer' }}>×</button>
+              <div style={{ display: 'grid', gridTemplateColumns: '60px 1fr 1fr', gap: 8, marginBottom: 10 }}>
+                <div><label style={labelStyle}>Emoji/Img</label><input value={p.img || ''} onChange={e => updateDemoProduct(idx, 'img', e.target.value)} style={inputStyle} /></div>
+                <div><label style={labelStyle}>Product Name</label><input value={p.name || ''} onChange={e => updateDemoProduct(idx, 'name', e.target.value)} style={inputStyle} /></div>
+                <div><label style={labelStyle}>Price</label><input value={p.price || ''} onChange={e => updateDemoProduct(idx, 'price', e.target.value)} style={inputStyle} /></div>
+              </div>
+              <div><label style={labelStyle}>Description</label><textarea value={p.desc || ''} onChange={e => updateDemoProduct(idx, 'desc', e.target.value)} style={{ ...inputStyle, minHeight: 40 }} /></div>
+            </div>
+          ))}
+          <button onClick={addDemoProduct} style={{ background: '#1f1f23', color: '#a1a1aa', border: '1px dashed #27272a', borderRadius: 8, padding: '10px 16px', fontSize: 12, cursor: 'pointer', width: '100%', marginBottom: 16 }}>+ Add Product</button>
+        </div>
+      )}
+
       {/* SCALE */}
       {tab === 'scale' && (
         <div style={cardStyle}>
@@ -666,3 +859,52 @@ function LeadsPage({ token }) {
     </div>
   );
 }
+
+export function TestedLeadsPage({ token }) {
+  const [leads, setLeads] = useState([]);
+  const h = { Authorization: `Bearer ${token}` };
+
+  useEffect(() => {
+    fetch(`${API}/requests/tested-leads`, { headers: h })
+      .then(r => r.json())
+      .then(setLeads)
+      .catch(() => {});
+  }, []);
+
+  const updateStatus = async (id, status) => {
+    await fetch(`${API}/requests/tested-leads/${id}`, {
+      method: 'PATCH',
+      headers: { ...h, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status })
+    });
+    setLeads(leads.map(l => l._id === id ? { ...l, status } : l));
+  };
+
+  const statusColor = s => s === 'new' ? '#f59e0b' : s === 'contacted' ? '#6366f1' : '#22c55e';
+
+  return (
+    <div>
+      <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 20 }}>Live Tested Leads ({leads.length})</h2>
+      {leads.length === 0 ? (
+        <p style={{ color: '#52525b', fontSize: 13, textAlign: 'center', padding: 40 }}>No tested leads yet</p>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {leads.map(l => (
+            <div key={l._id} style={{ background: '#111113', borderRadius: 10, padding: '16px 20px', border: '1px solid #1f1f23', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+              <div>
+                <p style={{ fontSize: 14, fontWeight: 500 }}>{l.name}</p>
+                <p style={{ fontSize: 12, color: '#71717a', marginTop: 2 }}>{l.phone} · Tested {new Date(l.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</p>
+              </div>
+              <select value={l.status} onChange={e => updateStatus(l._id, e.target.value)} style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #1f1f23', background: '#09090b', color: statusColor(l.status), fontSize: 12, fontWeight: 500 }}>
+                <option value="new">New</option>
+                <option value="contacted">Contacted</option>
+                <option value="closed">Closed</option>
+              </select>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
