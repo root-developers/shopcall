@@ -215,6 +215,15 @@ export default function Landing() {
     };
   }, [simState, simCam]);
 
+  // Scroll reveal observer
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.lp-reveal,.lp-reveal-scale').forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  });
+
   if (loading) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#09090b' }}>
@@ -227,15 +236,6 @@ export default function Landing() {
   const c = dark ? D : L;
   const { hero, stats, platforms, features, steps, pricing, finalCta, footer } = content;
   const scale = content.scale || 100;
-
-  // Scroll reveal observer
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-    document.querySelectorAll('.lp-reveal,.lp-reveal-scale').forEach(el => observer.observe(el));
-    return () => observer.disconnect();
-  });
 
   const getDisplayPrice = (priceStr) => {
     if (!isAnnual) return priceStr;
